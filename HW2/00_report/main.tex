@@ -130,7 +130,7 @@
 % ─────────────────────────────────────────────
 \chapter{Student-Specific Parameters}
 % ─────────────────────────────────────────────
-My student ID is M11407439, so $m = 39$. Every parameter in this homework follows from it:
+My student ID is M11407439, so $m = 39$. The table lists the parameters I get from it.
 
 \begin{table}[H]
 \centering
@@ -152,9 +152,9 @@ LFSR state $r_2$             & $11 + (m \bmod 20)$                & $30 = (\text
 \end{tabular}
 \end{table}
 
-All scripts are in \texttt{01\_src}: \texttt{q1.m}, \texttt{q2.m} and \texttt{q3.m} solve the three questions, and the
-helpers \texttt{new\_fig.m}, \texttt{save\_fig.m}, \texttt{tl\_labels.m} and \texttt{hw\_palette.m} set the figure style.
-Each script prints every number quoted in this report.
+The code is in \texttt{01\_src}. \texttt{q1.m}, \texttt{q2.m} and \texttt{q3.m} handle the three questions, and
+\texttt{new\_fig.m}, \texttt{save\_fig.m}, \texttt{tl\_labels.m} and \texttt{hw\_palette.m} only control how the figures look.
+The numbers quoted in this report are printed by the scripts when they run.
 
 \newpage
 
@@ -168,26 +168,26 @@ the student ID. For odd $N$, define the root-$u$ Zadoff-Chu sequence as
 \[ x_u[n] = e^{-j\pi u n(n+1)/N}, \quad n = 0, \ldots, N-1. \]
 Generate $x_u[n]$. Plot its real part, imaginary part, magnitude, and unwrapped phase. (10\%)}
 
-With $u = 40$ and $N = 53$, I generate $x_{40}[n]$ directly from the definition. Since $\gcd(40, 53) = 1$, it is a
-valid ZC root. The first few samples are $x_{40}[0] = 1$, $x_{40}[1] = 0.0296 + 0.9996j$ and
+With $u = 40$ and $N = 53$, I compute $x_{40}[n]$ straight from the definition. $\gcd(40, 53) = 1$, so 40 is a
+valid root. The first samples are $x_{40}[0] = 1$, $x_{40}[1] = 0.0296 + 0.9996j$ and
 $x_{40}[2] = -0.0888 - 0.9960j$.
 
-Some observations from the figure:
-\begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Constant amplitude.} $|x_u[n]| = 1$ for every $n$ (the largest error is $1.1 \times 10^{-16}$), so
-    the sequence carries all its information in the phase. This is the CAZAC (constant amplitude, zero autocorrelation)
-    property used in LTE PSS and PRACH.
-    \item \textbf{Symmetry.} The real and imaginary parts are mirror images about $n = 26$. Using
-    $(N-1-n)(N-n) = n(n+1) + N(N - 1 - 2n)$, I get $x_u[N-1-n] = x_u[n]\,e^{-j\pi u (N-1-2n)}$, and $N - 1 - 2n$ is even,
-    so $x_u[N-1-n] = x_u[n]$.
-    \item \textbf{Unwrapped phase.} The true phase $\phi[n] = -\pi u n(n+1)/N$ is a parabola that reaches $-6534.5$\,rad
-    at $n = 52$. Its sample-to-sample step is $-2\pi u(n+1)/N$, which is already larger than $\pi$ at $n = 0$. MATLAB
-    \texttt{unwrap} assumes every step lies in $(-\pi, \pi]$, so it cannot follow the parabola; it returns the
-    smallest-step phase path instead, which stays between 0 and 13.2\,rad and inherits the same mirror symmetry.
-    Both paths describe the same samples: they differ only by multiples of $2\pi$ (largest residue after wrapping:
-    $9.5 \times 10^{-13}$). This is just the sampled chirp aliasing, and it is also why root $u$ behaves like root
-    $u - N = -13$: $e^{-j\pi(u-N)n(n+1)/N} = x_u[n]\,e^{j\pi n(n+1)} = x_u[n]$ because $n(n+1)$ is even.
-\end{itemize}
+The magnitude panel is flat: $|x_u[n]| = 1$ for every $n$, up to a rounding error of $1.1 \times 10^{-16}$. All the
+information sits in the phase. Constant amplitude plus the zero autocorrelation shown in (b) is what people call a
+CAZAC sequence, and it is the reason LTE uses ZC sequences for PSS and PRACH.
+
+The real and imaginary parts are also mirror images about $n = 26$. This is easy to prove. Since
+$(N-1-n)(N-n) = n(n+1) + N(N - 1 - 2n)$, we have $x_u[N-1-n] = x_u[n]\,e^{-j\pi u (N-1-2n)}$, and $N - 1 - 2n$ is even,
+so $x_u[N-1-n] = x_u[n]$.
+
+The unwrapped phase needs a comment, because it does not look like the parabola $\phi[n] = -\pi u n(n+1)/N$ in the
+definition. That parabola drops to $-6534.5$\,rad at $n = 52$, and its step from one sample to the next is
+$-2\pi u(n+1)/N$, which is already larger than $\pi$ at $n = 0$. MATLAB \texttt{unwrap} assumes each step is in
+$(-\pi, \pi]$, so it cannot follow the parabola. It picks the path with the smallest steps instead, which stays between
+0 and 13.2\,rad and keeps the same mirror symmetry. The two paths differ only by multiples of $2\pi$ (the residue after
+wrapping is at most $9.5 \times 10^{-13}$), so they describe exactly the same samples. In other words, the chirp is
+aliased by the sampling. The same fact explains why root $u$ and root $u - N = -13$ give the same sequence:
+$e^{-j\pi(u-N)n(n+1)/N} = x_u[n]\,e^{j\pi n(n+1)} = x_u[n]$, because $n(n+1)$ is always even.
 
 \begin{figure}[H]
     \centering
@@ -205,36 +205,36 @@ property. (10\%)
 \[ R_u[l] = \frac{1}{N}\sum_{n=0}^{N-1} x_u[n]\,x_u^*[(n-l) \bmod N], \qquad
    R_u^{\text{lin}}[l] = \frac{1}{N}\sum_{n=l}^{N-1} x_u[n]\,x_u^*[n-l]. \]}
 
-\textbf{Periodic autocorrelation.} The simulation gives $R_u[0] = 1$ and $\max_{l \neq 0}|R_u[l]| = 7.9 \times 10^{-14}$,
-which is zero up to the rounding of the large phase arguments. All 52 sidelobes vanish.
+\textbf{Periodic autocorrelation.} I get $R_u[0] = 1$ and $\max_{l \neq 0}|R_u[l]| = 7.9 \times 10^{-14}$.
+The small residue comes from rounding the large phase arguments, so all 52 sidelobes are zero.
 
-\textbf{Why the periodic sidelobes are zero.} The product of a ZC sample with a shifted copy has a phase that is
-\emph{linear} in $n$, because the $n^2$ terms cancel:
+To see why, multiply a ZC sample by a shifted copy. The $n^2$ terms cancel and the phase of the product is
+\emph{linear} in $n$:
 \begin{equation}
     x_u[n]\,x_u^*[n-l]
     = e^{-j\pi u [\,n(n+1) - (n-l)(n-l+1)\,]/N}
     = \underbrace{e^{-j\pi u(l - l^2)/N}}_{c_l}\; e^{-j2\pi u l n/N}.
 \end{equation}
-For odd $N$, the same expression also holds with the cyclic index $(n-l) \bmod N$, since replacing $n-l$ by $n-l+N$
-changes the phase by $\pi u (2n - 2l + N + 1)$, which is a multiple of $2\pi$. Hence
+This still holds with the cyclic index $(n-l) \bmod N$. Replacing $n-l$ by $n-l+N$ changes the phase by
+$\pi u (2n - 2l + N + 1)$, and with $N$ odd that is a multiple of $2\pi$. So
 \begin{equation}
     R_u[l] = \frac{c_l}{N}\sum_{n=0}^{N-1} e^{-j2\pi u l n/N} = c_l\,\delta[l],
 \end{equation}
-because for $0 < l < N$, $ul$ is not a multiple of the prime $N$, and a complex exponential summed over a whole number
-of periods is zero.
+since for $0 < l < N$ the product $ul$ is not a multiple of the prime $N$, and a complex exponential summed over whole
+periods gives zero.
 
-\textbf{Linear autocorrelation.} The linear version keeps the same summand but sums only over $n = l, \ldots, N-1$,
-i.e.\ $N - l$ terms instead of a full period. The geometric series no longer closes, and
+\textbf{Linear autocorrelation.} The summand is the same, but the sum now runs over $n = l, \ldots, N-1$ only, which is
+$N - l$ terms instead of a full period. The geometric series does not close, and
 \begin{equation}
     |R_u^{\text{lin}}[l]| = \frac{1}{N}\left|\frac{\sin\big(\pi u l (N-l)/N\big)}{\sin(\pi u l/N)}\right|, \quad l \neq 0 .
 \end{equation}
-This is nonzero in general. My simulation matches this closed form to $3.9 \times 10^{-14}$ (black circles in the
-figure). The largest sidelobe is $|R_u^{\text{lin}}[8]| = 0.1296$ ($-17.7$\,dB) and the mean sidelobe is $0.0278$.
+which is generally not zero. The simulated values agree with this formula to $3.9 \times 10^{-14}$ (black circles in the
+figure). The largest sidelobe is $|R_u^{\text{lin}}[8]| = 0.1296$, or $-17.7$\,dB, and the average sidelobe is $0.0278$.
 
-In words: the zero sidelobes come from the cyclic wrap-around. In the periodic case, the samples that fall off the
-end of the shifted copy come back at the start, so the product is a complete set of $N$ roots of unity. A linear
-correlation drops those $l$ samples, and the remaining partial sum is not zero. This is why LTE adds a cyclic prefix
-before the ZC sequence: it makes the receiver's linear correlation look periodic.
+So the zero sidelobes depend on the wrap-around. In the periodic sum, the samples that slide off the end of the shifted
+copy reappear at the start, and the $N$ terms form a full set of $N$-th roots of unity. The linear sum loses $l$ of those
+terms, and what is left does not cancel. LTE handles this with a cyclic prefix in front of the ZC sequence, which makes
+the receiver's linear correlation behave like a periodic one.
 
 \begin{figure}[H]
     \centering
@@ -250,18 +250,18 @@ before the ZC sequence: it makes the receiver's linear correlation look periodic
 $l = 0, 1, \ldots, N-1$. (10\%)
 \[ C_{u,v}[l] = \frac{1}{N}\sum_{n=0}^{N-1} x_u[n]\,x_v^*[(n-l) \bmod N] \]}
 
-With $u = 40$ and $v = 5$, the cross-correlation has the \textbf{same magnitude at every lag}:
+With $u = 40$ and $v = 5$, the magnitude of the cross-correlation does not depend on the lag:
 \begin{equation}
-    |C_{40,5}[l]| = 0.137361 = \frac{1}{\sqrt{53}} \quad \text{for all } l = 0, \ldots, 52,
+    |C_{40,5}[l]| = 0.137361 = \frac{1}{\sqrt{53}} \quad \text{for all } l = 0, \ldots, 52 .
 \end{equation}
-with the minimum and maximum equal to six decimals. Only the phase changes with $l$.
+The minimum and maximum agree to six decimals. Only the phase changes with $l$ (bottom panel).
 
-The reason is that the $n^2$ terms no longer cancel. The product $x_u[n]x_v^*[n-l]$ has a phase
-$-\pi(u - v)n^2/N + (\text{linear in } n)$, so $C_{u,v}[l]$ is a quadratic Gauss sum. For a prime $N$ and
-$\gcd(u - v, N) = \gcd(35, 53) = 1$, every such sum has magnitude exactly $\sqrt{N}$, which gives
-$|C_{u,v}[l]| = \sqrt{N}/N = 1/\sqrt{N}$. This is the lowest possible flat level for two unit-energy sequences,
-because Parseval forces $\sum_l |C_{u,v}[l]|^2 = 1$ (here $53 \times 1/53 = 1$). So two different roots never produce
-a false peak: their correlation is spread evenly across all lags.
+This time the $n^2$ terms do not cancel. The phase of $x_u[n]x_v^*[n-l]$ is $-\pi(u - v)n^2/N$ plus a term linear in
+$n$, which makes $C_{u,v}[l]$ a quadratic Gauss sum. When $N$ is prime and $\gcd(u - v, N) = \gcd(35, 53) = 1$, such a
+sum always has magnitude $\sqrt{N}$, so $|C_{u,v}[l]| = \sqrt{N}/N = 1/\sqrt{N}$. A flat level cannot be any lower than
+this, because Parseval requires $\sum_l |C_{u,v}[l]|^2 = 1$ for unit-energy sequences (here $53 \times 1/53 = 1$).
+The practical meaning is that a wrong root never looks like a weak copy of the right one. Its correlation is spread
+evenly over all lags, with no peak anywhere.
 
 \begin{figure}[H]
     \centering
@@ -301,26 +301,24 @@ $u$ & $\max_\tau D(u, \tau)$ & $\arg\max_\tau$ & $D(u, \tau)$ at other lags \\
 \end{tabular}
 \end{table}
 
-\textbf{Result.} The detected pair is $(\hat{u}, \hat{\tau}) = (38, 6)$, which \textbf{matches} $(u_0, \tau_0) = (38, 6)$.
-The phase of the correlation at the peak is $0.2000\pi$, so the receiver also recovers $\angle\alpha = \pi/5$
-for free.
+\textbf{Result.} The largest value is $D(38, 6) = 1$, so the detected pair is $(\hat{u}, \hat{\tau}) = (38, 6)$.
+It \textbf{matches} $(u_0, \tau_0) = (38, 6)$. The correlation at the peak has phase $0.2000\pi$, which means the same
+search also gives the channel phase $\angle\alpha = \pi/5$.
 
-\textbf{Explanation.} The three curves follow directly from (b) and (c):
-\begin{itemize}[leftmargin=1.5em]
-    \item \textbf{Correct root ($u = 38$).} $D(u_0, \tau)$ is $|\alpha|$ times the periodic autocorrelation of $x_{38}$
-    evaluated at lag $\tau - \tau_0$. By (b) this is $|\alpha| = 1$ at $\tau = \tau_0$ and zero elsewhere, so there is a
-    single clean peak and no ambiguity in the delay.
-    \item \textbf{Wrong roots ($u = 36, 40$).} $D(u, \tau)$ is a cross-correlation between two different roots. Since
-    $u - u_0 = \mp 2$ and $\gcd(2, 53) = 1$, (c) says its magnitude is $1/\sqrt{N} = 0.1374$ at \emph{every} delay.
-    The wrong roots give a flat floor rather than a misleading peak (the ``argmax'' of a flat curve is meaningless,
-    so I mark it as flat).
-    \item \textbf{Margin.} The best wrong candidate is $0.1374$, so the true peak is $7.28\times$ ($17.2$\,dB) above
-    anything else. The complex gain does not change this, because $|\alpha| = 1$ scales every value equally and its
-    phase disappears inside $|\cdot|$.
-\end{itemize}
-In a real receiver (for example LTE PSS or PRACH detection), the root identifies the cell or the preamble and the
-delay gives the timing. Noise would add a random floor, but with this large margin the decision would stay correct
-down to a low SNR.
+\textbf{Explanation.} The three curves are what (b) and (c) predict. For the correct root $u = 38$, $D(u_0, \tau)$ is
+$|\alpha|$ times the periodic autocorrelation of $x_{38}$ at lag $\tau - \tau_0$. From (b), that is $|\alpha| = 1$ at
+$\tau = \tau_0$ and zero at every other delay, so the peak is a single stem and the delay is unambiguous.
+
+For the wrong roots $u = 36$ and $40$, $D(u, \tau)$ is a cross-correlation between two different roots. The difference
+$u - u_0 = \mp 2$ is coprime to 53, so by (c) the value is $1/\sqrt{N} = 0.1374$ at every delay. These two curves are
+completely flat. Their ``argmax'' would just be whichever lag happens to win by rounding error, so the table lists them
+as flat instead.
+
+The highest wrong value is $0.1374$, which puts the true peak $7.28$ times ($17.2$\,dB) above everything else. The
+complex gain has no effect on this: $|\alpha| = 1$ scales all values by the same amount, and its phase is removed by the
+absolute value. In an LTE receiver doing PSS or PRACH detection, the root would tell which cell or preamble was sent and
+the delay would give the timing. Noise would raise the flat floor somewhat, but with a 17\,dB margin the decision
+should hold well into low SNR.
 
 \begin{figure}[H]
     \centering
@@ -337,7 +335,7 @@ down to a low SNR.
 \[ \Phi_s(k) = \frac{1}{N}\sum_{n=0}^{N-1} S(n)\,S^*((n-k) \bmod N) \]
 for $N = 7$ and $13$. (15\%)}
 
-I use the codes exactly as listed in Table~1 of the spec:
+I use the two codes as they appear in Table~1 of the spec:
 \begin{align*}
     N = 7:  &\quad [-1\ -1\ -1\ +1\ +1\ -1\ +1], \\
     N = 13: &\quad [-1\ -1\ -1\ -1\ -1\ +1\ +1\ -1\ -1\ +1\ -1\ +1\ -1].
@@ -359,7 +357,7 @@ I use the codes exactly as listed in Table~1 of the spec:
 \input{tab/q2_n13.tex}
 \end{table}
 
-\textbf{Result.} Both periodic autocorrelations are \textbf{two-valued}:
+\textbf{Result.} Both periodic autocorrelations take only two values, the peak at $k = 0$ and one constant sidelobe:
 \begin{equation}
     \Phi_s(k) =
     \begin{cases}
@@ -374,22 +372,24 @@ I use the codes exactly as listed in Table~1 of the spec:
     \end{cases} \quad (N = 13).
 \end{equation}
 
-\textbf{Why.} A Barker code is defined by its \emph{aperiodic} autocorrelation $A(k) = \sum_{n=k}^{N-1} S(n)S(n-k)$,
-whose sidelobes satisfy $|A(k)| \le 1$. For odd $N$, they are $0$ at odd $k$ and $\pm 1$ at even $k$ (second row
-of each table). The periodic correlation adds the part that wraps around:
+\textbf{Why.} Barker codes are defined through the \emph{aperiodic} autocorrelation
+$A(k) = \sum_{n=k}^{N-1} S(n)S(n-k)$, with every sidelobe satisfying $|A(k)| \le 1$. For odd $N$ the sidelobes are 0 at
+odd $k$ and $\pm 1$ at even $k$, as the second row of each table shows. The periodic sum is the aperiodic one plus the
+part that wraps around:
 \begin{equation}
     N\Phi_s(k) = A(k) + A(N - k).
 \end{equation}
-Because $N$ is odd, $k$ and $N - k$ have opposite parity, so exactly one of the two terms is the nonzero $\pm 1$.
-That is why every sidelobe has the same value. For $N = 7$ all even-$k$ sidelobes are $-1$, giving $-1/7$; for $N = 13$
-they are $+1$, giving $+1/13$.
+With $N$ odd, $k$ and $N - k$ always have opposite parity. One of the two terms is therefore 0 and the other is
+$\pm 1$, which is why every periodic sidelobe comes out the same. In the length-7 code the even-$k$ sidelobes are all
+$-1$, giving $-1/7$. In the length-13 code they are all $+1$, giving $+1/13$.
 
-\textbf{Check by the sum rule.} Summing over all shifts gives $\sum_k N\Phi_s(k) = \big(\sum_n S(n)\big)^2$.
-For $N = 7$, $\sum S = -1$, and $7 + 6 \times (-1) = 1 = (-1)^2$. For $N = 13$, $\sum S = -5$, and $13 + 12 \times 1 = 25 = (-5)^2$.
-Equivalently, the off-peak value must be $\big((\sum S)^2 - N\big)/\big(N(N-1)\big)$, which the script confirms for both codes.
+\textbf{Sum check.} Adding up all shifts gives $\sum_k N\Phi_s(k) = \big(\sum_n S(n)\big)^2$. For $N = 7$, $\sum S = -1$
+and $7 + 6 \times (-1) = 1 = (-1)^2$. For $N = 13$, $\sum S = -5$ and $13 + 12 \times 1 = 25 = (-5)^2$. Put another way,
+a two-valued result forces the sidelobe to be $\big((\sum S)^2 - N\big)/\big(N(N-1)\big)$, and the script gets this
+value for both codes.
 
-In short, the Barker codes give a single peak of 1 with flat, tiny sidelobes ($|\Phi_s| = 1/N$) in the periodic sense as
-well, which makes them good synchronization words (e.g.\ the 11-chip Barker code in IEEE 802.11b).
+The periodic sidelobes are only $1/N$ in magnitude, so a Barker code still has one sharp peak when it repeats.
+That is what makes it useful as a synchronization word; IEEE 802.11b uses the 11-chip version for this.
 
 \begin{figure}[H]
     \centering
@@ -408,17 +408,18 @@ The octal pair $103_8$ and $147_8$ gives
     147_8 = (1\,100\,111)_2 \;\Rightarrow\; p'(x) = x^6 + x^5 + x^2 + x + 1 .
 \end{equation}
 
-\textbf{LFSR connection.} I follow the figure in the spec. Each register has six stages numbered 1 (left) to 6 (right).
-On every clock, the XOR of the tapped stages enters stage 1, all bits shift one stage to the right, and stage 6 is the
-output. Stage $k$ is tapped when $x^k$ appears in the polynomial:
+\textbf{LFSR connection.} I wire the registers as in the spec's figure. Each one has six stages, numbered 1 on the
+left to 6 on the right. On each clock, the XOR of the tapped stages goes into stage 1, everything shifts one stage to
+the right, and stage 6 is the output. A stage $k$ is tapped when $x^k$ is in the polynomial, which matches the arrows in
+the figure:
 \begin{itemize}[leftmargin=1.5em]
-    \item Top LFSR, $p(x) = x^6 + x + 1$: taps at stages \textbf{1 and 6} (the two arrows in the figure).
-    \item Bottom LFSR, $p'(x) = x^6 + x^5 + x^2 + x + 1$: taps at stages \textbf{1, 2, 5 and 6} (the four arrows).
+    \item top LFSR, $p(x) = x^6 + x + 1$, taps at stages 1 and 6 (two arrows);
+    \item bottom LFSR, $p'(x) = x^6 + x^5 + x^2 + x + 1$, taps at stages 1, 2, 5 and 6 (four arrows).
 \end{itemize}
-The Gold generator output is the XOR of the two stage-6 outputs.
+The generator output is the XOR of the two stage-6 outputs.
 
-\textbf{Initial states.} I write $r_1 = 20$ and $r_2 = 30$ as six-bit binary numbers and load the MSB into stage 1:
-$r_1 = 20 \to \texttt{010100}$ and $r_2 = 30 \to \texttt{011110}$. Both are nonzero, as an LFSR needs.
+\textbf{Initial states.} I write $r_1 = 20$ and $r_2 = 30$ in six-bit binary and put the MSB in stage 1, which gives
+$r_1 \to \texttt{010100}$ and $r_2 \to \texttt{011110}$. Neither is all zeros, so both registers will run.
 
 \section{(a) Maximal-Length Sequences}
 
@@ -428,8 +429,8 @@ complete sequences. Then, set the initial states $r_2$ into the bottom LFSR and 
 top LFSR. Generate the Maximal-length sequences $s_2[n]$ of 63 bits, for $n = 0, 1, \ldots, 62$. Print the initial
 values, the complete sequences. (10\%)}
 
-An all-zero register stays all zero forever, so in each case the Gold output is just the output of the loaded register
-(the script checks that the other register outputs only zeros).
+A register loaded with all zeros never leaves that state, so in each case the output is simply the loaded register's
+m-sequence. The script also checks that the empty register outputs nothing but zeros.
 
 \begin{table}[H]
 \centering
@@ -447,15 +448,16 @@ An all-zero register stays all zero forever, so in each case the Gold output is 
 \input{tab/q3a_seq.tex}
 \end{table}
 
-\textbf{Checks.} The first six output bits are the initial state read from stage 6 back to stage 1, e.g.\
-$s_1[0..5] = \texttt{001010}$ is \texttt{010100} reversed. Both registers visit all $2^6 - 1 = 63$ nonzero states
-before returning to the initial state, so the period is exactly 63, which confirms both polynomials are primitive.
-Each sequence has 32 ones and 31 zeros (the balance property of an m-sequence).
+\textbf{Checks.} The first six output bits are the initial state read backwards, from stage 6 to stage 1. For example,
+$s_1[0..5] = \texttt{001010}$ is \texttt{010100} reversed. Each register goes through all $2^6 - 1 = 63$ nonzero states
+before it comes back to the start, so the period is exactly 63 and both polynomials are primitive. Each sequence has
+32 ones and 31 zeros, as an m-sequence should.
 
-A note on the convention: with the output at stage 6, the figure's taps produce the recurrence
-$s_1[n+6] = s_1[n+5] \oplus s_1[n]$, whose characteristic polynomial is the reciprocal $x^6 + x^5 + 1$ of $p(x)$.
-The reciprocal of a primitive polynomial is primitive and just generates the time-reversed m-sequence. Reversing
-both sequences only maps a correlation lag $l$ to $-l$, so none of the correlation results below depend on this choice.
+One detail about the convention. Because the output is taken from stage 6, the taps in the figure give the recurrence
+$s_1[n+6] = s_1[n+5] \oplus s_1[n]$. Its characteristic polynomial is $x^6 + x^5 + 1$, the reciprocal of $p(x)$. A
+reciprocal primitive polynomial is still primitive and produces the same m-sequence run backwards in time. Reversing
+both sequences turns lag $l$ into lag $-l$ and changes nothing else, so the correlation results below do not depend on
+this choice.
 
 \newpage
 
@@ -473,14 +475,14 @@ For both sequences the simulation gives exactly
         -1/63 = -0.0159, & l = 1, \ldots, 62 .
     \end{cases}
 \end{equation}
-This is the ideal two-valued autocorrelation of an m-sequence. It follows from two properties:
+This is the two-valued autocorrelation expected of an m-sequence, and it comes from two properties:
 \begin{enumerate}[label=\arabic*)]
-    \item \textbf{Shift-and-add.} For $l \neq 0$, $s[n] \oplus s[n+l]$ is another cyclic shift $s[n+k]$ of the same
-    m-sequence, because both satisfy the same linear recurrence. In $\pm 1$ form, $d[n]\,d[n+l] = d[n+k]$. The script
-    checks this for all 62 nonzero lags of $d_1$.
-    \item \textbf{Balance.} Each period has 32 ones and 31 zeros, so $\sum_n d[n] = 31 - 32 = -1$.
+    \item Shift-and-add. For $l \neq 0$, $s[n] \oplus s[n+l]$ satisfies the same linear recurrence as $s[n]$, so it
+    is another cyclic shift $s[n+k]$ of the same sequence. In $\pm 1$ form this reads $d[n]\,d[n+l] = d[n+k]$. The
+    script confirms it for all 62 nonzero lags of $d_1$.
+    \item Balance. One period has 32 ones and 31 zeros, so $\sum_n d[n] = 31 - 32 = -1$.
 \end{enumerate}
-Together, $63\,R[l] = \sum_n d[n+k] = -1$ for every $l \neq 0$.
+Putting them together, $63\,R[l] = \sum_n d[n+k] = -1$ for every $l \neq 0$.
 
 \begin{figure}[H]
     \centering
@@ -497,7 +499,7 @@ bottom LFSR, respectively. Generate the output $s_3[n]$ of 63 bits. Now, map $s_
 the cross-correlation property for $(u, v) = (1, 3)$ and $(u, v) = (2, 3)$ with $N = 63$. (20\%)
 \[ C_{u,v}[l] = \frac{1}{N}\sum_{n=0}^{N-1} d_u[n]\,d_v[(n-l) \bmod N] \]}
 
-With top $= \texttt{010100}$ and bottom $= \texttt{011110}$, the Gold generator outputs:
+Loading \texttt{010100} into the top register and \texttt{011110} into the bottom one gives the following codeword.
 
 \begin{table}[H]
 \centering
@@ -507,14 +509,15 @@ With top $= \texttt{010100}$ and bottom $= \texttt{011110}$, the Gold generator 
 \input{tab/q3c_seq.tex}
 \end{table}
 
-The two registers do not interact, so $s_3[n] = s_1[n] \oplus s_2[n]$ (confirmed bit by bit), and in $\pm 1$ form
-$d_3[n] = d_1[n]\,d_2[n]$.
+The two registers run independently, so $s_3[n] = s_1[n] \oplus s_2[n]$ (the script compares all 63 bits), and in
+$\pm 1$ form $d_3[n] = d_1[n]\,d_2[n]$.
 
-The cross-correlations take \textbf{only three values}:
+Both cross-correlations take only three values. Table~\ref{tab:cc} counts how many lags give each one.
 
 \begin{table}[H]
 \centering
 \caption{Values of $63\,C_{u,v}[l]$ over All 63 Lags}
+\label{tab:cc}
 \setlength{\tabcolsep}{14pt}
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{lccc|c}
@@ -527,8 +530,8 @@ $C_{2,3}$ & 6 & 47 & 10 & $17/63 = 0.2698$ \\
 \end{tabular}
 \end{table}
 
-So $C_{1,3}[l], C_{2,3}[l] \in \{-17/63,\ -1/63,\ 15/63\}$, and the largest magnitude is $17/63 = 0.27$, far below the
-autocorrelation peak of 1.
+So $C_{1,3}[l]$ and $C_{2,3}[l]$ both lie in $\{-17/63,\ -1/63,\ 15/63\}$. The largest magnitude is $17/63 = 0.27$,
+compared with an autocorrelation peak of 1.
 
 \begin{figure}[H]
     \centering
@@ -542,47 +545,47 @@ autocorrelation peak of 1.
 
 \question{Please judge if your answer in (c) is correct or not? Please state the reason. (5\%)}
 
-\textbf{Yes, the answer in (c) is correct.} The reasons are:
+\textbf{Yes, the answer in (c) is correct.} I checked it in five ways.
 
-\textbf{1) It matches Gold's theorem.} $p(x)$ and $p'(x)$ are a preferred pair of degree $n = 6$. For a preferred pair,
-the periodic cross-correlation of the two m-sequences, and of any two codewords in the Gold family they generate,
-takes only the three values
+\textbf{1) Gold's theorem.} $p(x)$ and $p'(x)$ are a preferred pair of degree $n = 6$. For a preferred pair, the
+periodic cross-correlation between the two m-sequences, or between any two codewords of the Gold family they generate,
+can only be
 \begin{equation}
     \frac{1}{N}\left\{-t(n),\ -1,\ t(n) - 2\right\}, \qquad
     t(n) = 1 + 2^{\lfloor (n+2)/2 \rfloor} = 1 + 2^{4} = 17 ,
 \end{equation}
-i.e.\ $\{-17, -1, 15\}/63$. This is exactly the set I get for $C_{1,3}$ and $C_{2,3}$.
+i.e.\ $\{-17, -1, 15\}/63$, which is the set I got for $C_{1,3}$ and $C_{2,3}$.
 
-\textbf{2) The value counts also match.} I can show $C_{1,3}$ must behave like $C_{1,2}$. Using $d_3 = d_1 d_2$,
+\textbf{2) How often each value appears.} $C_{1,3}$ has to look like $C_{1,2}$. Using $d_3 = d_1 d_2$,
 \begin{equation}
     63\,C_{1,3}[l] = \sum_n \underbrace{d_1[n]\,d_1[n-l]}_{=\,d_1[n-k] \text{ for } l \neq 0}\, d_2[n-l],
 \end{equation}
-so for $l \neq 0$ it is the cross-correlation of $d_1$ and $d_2$ at another lag, and at $l = 0$ it equals
-$\sum_n d_2[n] = -1$. The same argument works for $C_{2,3}$. For a preferred pair with $n = 6$ (decimation
-$q = 2^k + 1 = 5$, $e = \gcd(n, k) = 2$), theory gives how often each value occurs:
+so for $l \neq 0$ it equals the cross-correlation of $d_1$ and $d_2$ at some other lag, and at $l = 0$ it is
+$\sum_n d_2[n] = -1$. $C_{2,3}$ works the same way. For a preferred pair with $n = 6$ (decimation $q = 2^k + 1 = 5$,
+$e = \gcd(n, k) = 2$), the theory also says how many lags give each value:
 \begin{equation}
     -17\!: 2^{n-e-1} - 2^{\frac{n-e}{2}-1} = 6, \qquad
     -1\!: 2^{n} - 2^{n-e} - 1 = 47, \qquad
     15\!: 2^{n-e-1} + 2^{\frac{n-e}{2}-1} = 10 .
 \end{equation}
-My $C_{1,2}$, $C_{1,3}$ and $C_{2,3}$ all show exactly 6, 47 and 10 (see the figure below).
+$C_{1,2}$, $C_{1,3}$ and $C_{2,3}$ each give exactly 6, 47 and 10 (figure below).
 
-\textbf{3) The pair really is preferred.} Taking every fifth bit of $s_1$, $s_1[5n \bmod 63]$, gives $s_2$ shifted by
-6 lags, so $s_2$ is the $q = 5$ decimation of $s_1$. Gold's condition holds: $q = 2^2 + 1$ and $n/\gcd(n, 2) = 3$ is odd.
-(Other values such as $q = 13, 21, 23$ do not give $s_2$.)
+\textbf{3) The pair is preferred.} Taking every fifth bit of $s_1$, i.e.\ $s_1[5n \bmod 63]$, gives $s_2$ shifted by
+6 lags. So $s_2$ is the $q = 5$ decimation of $s_1$, and Gold's condition holds: $q = 2^2 + 1$ and $n/\gcd(n, 2) = 3$ is
+odd. I also tried $q = 13$, 21 and 23, and none of them gives $s_2$.
 
 \textbf{4) Sum check.} For any two $\pm 1$ sequences, $\sum_l C_{u,v}[l] = \frac{1}{N}\big(\sum_n d_u[n]\big)\big(\sum_n d_v[n]\big)$.
-All three sequences have 32 ones, so each sum is $(-1)(-1)/63 = 1/63$. From the table:
-$(6 \times (-17) + 47 \times (-1) + 10 \times 15)/63 = 1/63$. \checkmark
+Each of the three sequences has 32 ones, so the sum should be $(-1)(-1)/63 = 1/63$. The counts in
+Table~\ref{tab:cc} give $(6 \times (-17) + 47 \times (-1) + 10 \times 15)/63 = 1/63$. \checkmark
 
-\textbf{5) Brute force over the whole family.} The Gold family has $N + 2 = 65$ codewords: $d_1$, $d_2$ and
-$d_1[n]\,d_2[n+k]$ for $k = 0, \ldots, 62$. Checking all $\binom{65}{2} = 2080$ pairs at all 63 lags, the
-cross-correlation never leaves $\{-17, -1, 15\}/63$.
+\textbf{5) The whole family.} The Gold family has $N + 2 = 65$ codewords: $d_1$, $d_2$, and $d_1[n]\,d_2[n+k]$ for
+$k = 0, \ldots, 62$. I computed the cross-correlation for all $\binom{65}{2} = 2080$ pairs at all 63 lags, and every
+value was $-17/63$, $-1/63$ or $15/63$.
 
-One more remark: $d_3$ itself is not an m-sequence, so its autocorrelation is not two-valued. Its 62 sidelobes take the
-values $-17$, $-1$ and $15$ (over 63) as well, 12, 38 and 12 times. This is the price of the Gold family: it trades the ideal
-$-1/63$ autocorrelation of an m-sequence for 65 codewords with a guaranteed low cross-correlation of at most $17/63$,
-which is what a CDMA system such as GPS needs to separate many users.
+$d_3$ itself is not an m-sequence, so its own autocorrelation is not two-valued. Its 62 sidelobes are
+also $-17$, $-1$ and $15$ (over 63), occurring 12, 38 and 12 times. A Gold family gives up the perfect $-1/63$
+autocorrelation of a single m-sequence. In return it provides 65 codewords whose cross-correlation never exceeds
+$17/63$, and that is the property a CDMA system such as GPS relies on to tell users apart.
 
 \begin{figure}[H]
     \centering
