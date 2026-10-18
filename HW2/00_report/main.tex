@@ -185,14 +185,16 @@ definition. That parabola drops to $-6534.5$\,rad at $n = 52$, and its step from
 $-2\pi u(n+1)/N$, which is already larger than $\pi$ at $n = 0$. MATLAB \texttt{unwrap} assumes each step is in
 $(-\pi, \pi]$, so it cannot follow the parabola. It picks the path with the smallest steps instead, which stays between
 0 and 13.2\,rad and keeps the same mirror symmetry. The two paths differ only by multiples of $2\pi$ (the residue after
-wrapping is at most $9.5 \times 10^{-13}$), so they describe exactly the same samples. In other words, the chirp is
+wrapping is at most $9.5 \times 10^{-13}$), so they describe exactly the same samples. The bottom panel shows this
+directly: after adding the right multiple of $2\pi$ to each unwrapped sample, every point lands on the analytic
+parabola $-\pi u n(n+1)/N$. In other words, the chirp is
 aliased by the sampling. The same fact explains why root $u$ and root $u - N = -13$ give the same sequence:
 $e^{-j\pi(u-N)n(n+1)/N} = x_u[n]\,e^{j\pi n(n+1)} = x_u[n]$, because $n(n+1)$ is always even.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\linewidth]{q1a.pdf}
-    \caption{Real Part, Imaginary Part, Magnitude and Unwrapped Phase of $x_{40}[n]$}
+    \caption{Real Part, Imaginary Part, Magnitude and Unwrapped Phase of $x_{40}[n]$; bottom: Analytic Phase $-\pi u n(n+1)/N$}
 \end{figure}
 
 \newpage
@@ -482,12 +484,14 @@ This is the two-valued autocorrelation expected of an m-sequence, and it comes f
     script confirms it for all 62 nonzero lags of $d_1$.
     \item Balance. One period has 32 ones and 31 zeros, so $\sum_n d[n] = 31 - 32 = -1$.
 \end{enumerate}
-Putting them together, $63\,R[l] = \sum_n d[n+k] = -1$ for every $l \neq 0$.
+Putting them together, $63\,R[l] = \sum_n d[n+k] = -1$ for every $l \neq 0$. At full scale the $-1/63$ sidelobes sit
+almost on the zero line, so the figure adds a zoomed panel under each sequence; all 62 sidelobes lie exactly on
+$-1/63$.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.92\linewidth]{q3b.pdf}
-    \caption{Normalized Periodic Autocorrelation of $d_1[n]$ (top) and $d_2[n]$ (bottom)}
+    \caption{Normalized Periodic Autocorrelation of $d_1[n]$ and $d_2[n]$, each Followed by a Zoom on Its Sidelobes}
 \end{figure}
 
 \newpage

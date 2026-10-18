@@ -33,8 +33,8 @@ fprintf('    unwrap phase range = [%.2f, %.2f] rad, analytic phase range = [%.2f
 fprintf('    first samples x_u[0..4]:\n');
 fprintf('    %+.4f%+.4fj\n', [real(xu(1:5)); imag(xu(1:5))]);
 
-fh = new_fig('Q1(a)', [900 640]);
-tl = tiledlayout(2, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+fh = new_fig('Q1(a)', [900 900]);
+tl = tiledlayout(3, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
 nexttile;
 stem_one(n, real(xu), p.blue);
 set_idx_axis(N, 8); ylim([-1.2 1.2]);
@@ -52,6 +52,16 @@ plot(n, ph, '.-', 'Color', p.ink2, 'MarkerSize', 12, 'LineWidth', 1.1);
 set_idx_axis(N, 8);
 ylim('padded');
 title('Unwrapped phase $\angle x_u[n]$ (rad)');
+nexttile([1 2]);
+% Shift each unwrap sample by its own 2*pi*k: lands exactly on the analytic parabola
+ph_fit = ph + 2*pi*round((ph_true - ph)/(2*pi));
+plot(n, ph_true, '-', 'Color', p.ink2, 'LineWidth', 1.2); hold on;
+plot(n, ph_fit, 'o', 'Color', p.orange, 'MarkerSize', 6, 'LineWidth', 1.1);
+set_idx_axis(N, 4);
+ylim('padded');
+ylabel('rad');
+legend('Analytic $-\pi u n(n+1)/N$', 'Unwrapped phase $+\,2\pi k_n$', 'Location', 'southwest');
+title('Analytic (continuous) phase');
 tl_labels(tl, sprintf('Root-%d Zadoff-Chu sequence ($N = %d$)', u, N), xl_n);
 save_fig(fh, 'q1a');
 

@@ -52,8 +52,8 @@ fprintf('\n(b) R1[0] = %.4f, R1[l>0] in {%s}\n', R1(1), strjoin(unique(compose('
 fprintf('    R2[0] = %.4f, R2[l>0] in {%s}\n', R2(1), strjoin(unique(compose('%+.4f', R2(2:end))), ', '));
 fprintf('    -1/63 = %.4f\n', -1/63);
 
-fh = new_fig('Q3(b)', [900 600]);
-tl = tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
+fh = new_fig('Q3(b)', [900 820]);
+tl = tiledlayout(4, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
 R = {R1, R2};
 for i = 1:2
     nexttile;
@@ -63,6 +63,16 @@ for i = 1:2
     ylabel(sprintf('$R_%d[l]$', i));
     legend(sprintf('$R_%d[l]$', i), '$-1/63$', 'Location', 'northeast');
     title(sprintf('$d_%d[n] = (-1)^{s_%d[n]}$', i, i));
+
+    % Zoom on the sidelobes l = 1 ~ 62
+    nexttile;
+    stem(l(2:end), R{i}(2:end), 'filled', 'Color', p.blue, 'MarkerSize', 4, 'LineWidth', 1.2); hold on;
+    yline(-1/L, '--', 'Color', p.red, 'LineWidth', 1);
+    set_lag_axis(L); ylim([-0.03 0.01]);
+    yticks([-2/L -1/L 0]);
+    yticklabels({'$-2/63$', '$-1/63$', '$0$'});
+    ylabel(sprintf('$R_%d[l]$', i));
+    title(sprintf('Zoom on sidelobes of $R_%d[l]$, $l = 1, \\ldots, 62$', i));
 end
 tl_labels(tl, 'Normalized periodic autocorrelation of the m-sequences', 'Lag $l$');
 save_fig(fh, 'q3b');
