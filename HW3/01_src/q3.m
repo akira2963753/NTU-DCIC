@@ -39,7 +39,12 @@ Hk_dft = fftshift(fft(ch.hn, N));    % N-point DFT of h[n], reordered to k = -N/
 fprintf('\n(c) f_k = k*df, k = %d ~ %d -> f_k = %.6f ~ %.6f MHz\n', k(1), k(end), fk(1)/1e6, fk(end)/1e6);
 fprintf('    |H(f_k)|: max = %.4f at k = %d, min = %.4f at k = %d\n', Hmax, k(imax), Hmin, k(imin));
 fprintf('    max|H(f_k) - DFT_N{h[n]}[k]| = %.1e\n', max(abs(Hk - Hk_dft)));
-fprintf('    k = -2 ~ 2: %s\n', sprintf('%.4f ', abs(Hk(N/2 + (-1:3)))));
+k_show = [-256 -255 -128 -90 -28 -1 0 1 128 255];
+fprintf('       k     f_k (MHz)      |H(f_k)|   angle H(f_k) (rad)\n');
+for kk = k_show
+    fprintf('    %4d   %+12.6f   %.6f   %+.6f\n', kk, fk(kk + N/2 + 1)/1e6, abs(Hk(kk + N/2 + 1)), angle(Hk(kk + N/2 + 1)));
+end
+write_q3_table(k_show, fk(k_show + N/2 + 1), Hk(k_show + N/2 + 1));
 
 f = linspace(-Fs/2, Fs/2, 5001);
 H = h*exp(-1j*2*pi*tau.'*f);
@@ -67,6 +72,19 @@ tl_labels(tl, sprintf('Channel response at the subcarriers: $f_k = k\\Delta f$, 
 save_fig(fh, 'q3c');
 
 %% Local functions
+function write_q3_table(k_show, fk, Hk)
+tabdir = fullfile(fileparts(mfilename('fullpath')), '..', '00_report', 'tab');
+if ~exist(tabdir, 'dir'), mkdir(tabdir); end
+fid = fopen(fullfile(tabdir, 'q3c.tex'), 'w');
+fprintf(fid, '\\begin{tabular}{rrcc}\n\\toprule\n');
+fprintf(fid, '$k$ & $f_k$ (MHz) & $|H[k]|$ & $\\angle H[k]$ (rad) \\\\\n\\midrule\n');
+for i = 1:numel(k_show)
+    fprintf(fid, '$%d$ & $%.6f$ & %.4f & $%.4f$ \\\\\n', k_show(i), fk(i)/1e6, abs(Hk(i)), angle(Hk(i)));
+end
+fprintf(fid, '\\bottomrule\n\\end{tabular}\n');
+fclose(fid);
+end
+
 function set_k_axis(N)
 xlim([-N/2 - 4, N/2 + 3]);
 xticks(-N/2:64:N/2);

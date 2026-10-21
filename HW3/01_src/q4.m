@@ -38,31 +38,44 @@ fprintf('    x[n]: length %d + CP %d = %d samples, mean|x|^2 = %.6f, max|x| = %.
 fprintf('    CP check: max|x_cp[0..%d] - x[%d..%d]| = %.1e\n', Ng - 1, N - Ng, N - 1, ...
     max(abs(xcp(1:Ng) - xcp(N+1:N+Ng))));
 
-fh = new_fig('Q4(a)', [900 980]);
-tl = tiledlayout(4, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
-nexttile;
-stem(k, real(X), 'filled', 'Color', p.blue, 'MarkerSize', 2.2, 'LineWidth', 0.6);
+fh = new_fig('Q4(a) X[k]', [900 900]);
+tl = tiledlayout(3, 2, 'TileSpacing', 'compact', 'Padding', 'compact');
+nexttile([1 2]);
+stem_qpsk(k, real(X), p.blue);
 set_k_axis(N);
-ylim([-1 1]); yticks([-1/sqrt(2) 0 1/sqrt(2)]); yticklabels({'$-1/\sqrt{2}$', '$0$', '$1/\sqrt{2}$'});
 ylabel('$\mathrm{Re}\{X[k]\}$');
-title('Frequency-domain QPSK data, real part');
-nexttile;
-stem(k, imag(X), 'filled', 'Color', p.orange, 'MarkerSize', 2.2, 'LineWidth', 0.6);
+title('Real part, all $N = 512$ subcarriers');
+nexttile([1 2]);
+stem_qpsk(k, imag(X), p.orange);
 set_k_axis(N);
-ylim([-1 1]); yticks([-1/sqrt(2) 0 1/sqrt(2)]); yticklabels({'$-1/\sqrt{2}$', '$0$', '$1/\sqrt{2}$'});
 ylabel('$\mathrm{Im}\{X[k]\}$');
-xlabel(xl_k);
-title('Frequency-domain QPSK data, imaginary part');
+title('Imaginary part, all $N = 512$ subcarriers');
+kz = -16:15;    % zoom so the individual symbols are readable
+nexttile;
+stem_qpsk(kz, real(X(kz + N/2 + 1)), p.blue);
+xlim([kz(1) - 1, kz(end) + 1]); xticks(-16:8:16);
+ylabel('$\mathrm{Re}\{X[k]\}$');
+title('Real part, zoom $k = -16 \sim 15$');
+nexttile;
+stem_qpsk(kz, imag(X(kz + N/2 + 1)), p.orange);
+xlim([kz(1) - 1, kz(end) + 1]); xticks(-16:8:16);
+ylabel('$\mathrm{Im}\{X[k]\}$');
+title('Imaginary part, zoom $k = -16 \sim 15$');
+tl_labels(tl, 'Frequency-domain QPSK data $X[k]$ (black points of HW1)', xl_k);
+save_fig(fh, 'q4a1');
+
+fh = new_fig('Q4(a) x[n]', [900 640]);
+tl = tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
 nexttile;
 plot_cp_signal(ncp, real(xcp), Ng, N, p, p.blue);
 ylabel('$\mathrm{Re}\{x[n]\}$');
-title(sprintf('Time-domain symbol with CP (gray: CP, $n = 0 \\sim %d$; green: its source, $n = %d \\sim %d$)', ...
-    Ng - 1, N, N + Ng - 1));
+legend(sprintf('CP, $0 \\le n \\le %d$', Ng - 1), sprintf('Copied from $%d \\le n \\le %d$', N, N + Ng - 1), ...
+    'Location', 'northoutside', 'Orientation', 'horizontal');
 nexttile;
 plot_cp_signal(ncp, imag(xcp), Ng, N, p, p.orange);
 ylabel('$\mathrm{Im}\{x[n]\}$');
-xlabel(xl_n);
-save_fig(fh, 'q4a');
+tl_labels(tl, sprintf('Time-domain OFDM symbol with cyclic prefix, $N + N_g = %d$ samples', N + Ng), xl_n);
+save_fig(fh, 'q4a2');
 
 %% (b) Linear convolution with h[n], CP removal and DFT
 y = conv(hn, xcp);
@@ -155,11 +168,18 @@ y = conv(hn, [x(N-Ng+1:N), x]);
 Y = fftshift(fft(y(Ng+1:Ng+N)))/sqrt(N);
 end
 
+function stem_qpsk(k, v, color)
+stem(k, v, 'filled', 'Color', color, 'MarkerSize', 2.6, 'LineWidth', 0.7);
+ylim([-1 1]);
+yticks([-1/sqrt(2) 0 1/sqrt(2)]);
+yticklabels({'$-1/\sqrt{2}$', '$0$', '$1/\sqrt{2}$'});
+end
+
 function plot_cp_signal(n, v, Ng, N, p, color)
 xregion(-0.5, Ng - 0.5, 'FaceColor', p.muted, 'FaceAlpha', 0.18, 'EdgeColor', 'none');
 xregion(N - 0.5, N + Ng - 0.5, 'FaceColor', p.aqua, 'FaceAlpha', 0.15, 'EdgeColor', 'none');
 hold on;
-plot(n, v, 'Color', color, 'LineWidth', 0.9);
+plot(n, v, 'Color', color, 'LineWidth', 0.9, 'HandleVisibility', 'off');
 xlim([0 N + Ng]);
 xticks([0 Ng 128:128:N N + Ng]);
 ylim([-3 3]);

@@ -132,7 +132,7 @@
 \chapter{Setup and Code Organization}
 % ─────────────────────────────────────────────
 My student ID is M11407439, so $m = 39$. This number is only used as the random seed in Q2 and Q4
-(\texttt{rng(39, 'twister')}). Everything else in Q1 and Q3 follows from the power delay profile and $F_s = 250$\,MHz.
+(\texttt{rng(39, \textquotesingle twister\textquotesingle)}). Everything else in Q1 and Q3 follows from the power delay profile and $F_s = 250$\,MHz.
 
 \begin{table}[H]
 \centering
@@ -182,11 +182,11 @@ with at least six significant digits. (10\%)
 \[ p_i = 10^{P_{i,\mathrm{dB}}/10}, \qquad \tilde p_i = \frac{p_i}{\sum_r p_r} \]}
 
 The table numbers the paths from 0 to 3 while the vectors in the question are written from 1 to 4. They describe the
-same four paths, so I keep the tap index $i = 0, \ldots, 3$ everywhere; the $k$-th vector entry is tap $k - 1$.
+same four paths, so I keep the tap index $i = 0, \ldots, 3$ everywhere; vector entry $j$ is tap $j - 1$.
 \texttt{q1.m} prints
 \begin{align*}
-    \mathbf{p} &= [\,1 \quad 0.63095734 \quad 0.25118864 \quad 0.12589254\,], && \textstyle\sum_r p_r = 2.0080385, \\
-    \tilde{\mathbf{p}} &= [\,0.49799841 \quad 0.31421576 \quad 0.12509155 \quad 0.062694286\,], && \textstyle\sum_r \tilde p_r = 1 .
+    \mathbf{p} &= [\,1.00000000 \quad 0.63095734 \quad 0.25118864 \quad 0.12589254\,], && \textstyle\sum_r p_r = 2.0080385, \\
+    \tilde{\mathbf{p}} &= [\,0.49799841 \quad 0.31421576 \quad 0.12509155 \quad 0.06269429\,], && \textstyle\sum_r \tilde p_r = 1 .
 \end{align*}
 The first path is the 0\,dB reference, so $p_0 = 1$ exactly. After normalization it carries almost half of the power,
 and the first two paths together hold 81\% of it.
@@ -318,7 +318,7 @@ having variance 1/2. Use the powers and delays from Question 1.}
 $h_i$, their magnitudes and phases, and the final sum of squared magnitudes. (15\%)
 \[ g_i = \sqrt{p_i}\,\gamma_i, \qquad h_i = \frac{g_i}{\sqrt{\sum_r |g_r|^2}} \]}
 
-With \texttt{rng(39, 'twister')} I draw \texttt{gamma = (randn(1,4) + 1j*randn(1,4))/sqrt(2)}, so the real and
+With \texttt{rng(39, \textquotesingle twister\textquotesingle)} I draw \texttt{gamma = (randn(1,4) + 1j*randn(1,4))/sqrt(2)}, so the real and
 imaginary parts are independent $\mathcal{N}(0, 1/2)$ and $E|\gamma_i|^2 = 1$. Table~\ref{tab:q2a} lists the results
 (the console prints six decimals; four are kept here).
 
@@ -359,8 +359,18 @@ e^{-j2\pi f\tau_i}$, and the Fourier transform is linear, so
          = \sum_{i=0}^{3} h_i\,e^{-j2\pi f \tau_i}
          = h_0 + h_1 e^{-j2\pi f (16\,\mathrm{ns})} + h_2 e^{-j2\pi f (92\,\mathrm{ns})} + h_3 e^{-j2\pi f (200\,\mathrm{ns})} .
 \end{equation}
-The magnitude is $|H(f)|$ and the phase is $\angle H(f) = \operatorname{atan2}(\mathrm{Im}\,H, \mathrm{Re}\,H)$. I
-evaluate both on a 50\,kHz grid from $-250$ to 250\,MHz.
+Writing each gain in polar form, $h_i = |h_i|e^{j\theta_i}$ with $\theta_i = \angle h_i$ from Table~\ref{tab:q2a}, the
+real and imaginary parts are
+\begin{equation}
+    \mathrm{Re}\,H(f) = \sum_{i=0}^{3} |h_i| \cos(\theta_i - 2\pi f\tau_i), \qquad
+    \mathrm{Im}\,H(f) = \sum_{i=0}^{3} |h_i| \sin(\theta_i - 2\pi f\tau_i),
+\end{equation}
+so the magnitude and phase plotted below are
+\begin{equation}
+    |H(f)| = \sqrt{\big(\mathrm{Re}\,H(f)\big)^2 + \big(\mathrm{Im}\,H(f)\big)^2}, \qquad
+    \angle H(f) = \operatorname{atan2}\big(\mathrm{Im}\,H(f),\ \mathrm{Re}\,H(f)\big) \in (-\pi, \pi].
+\end{equation}
+I evaluate them on a 50\,kHz grid from $-250$ to 250\,MHz.
 
 $H(f)$ is a sum of four phasors that turn at different rates as $f$ changes. Where they line up, $|H(f)|$ reaches
 1.83; where they cancel, it drops to 0.007 ($-43$\,dB, at $-43.95$\,MHz). The fastest phasor belongs to the 200\,ns
@@ -497,7 +507,17 @@ and the channel response at each of them follows from Q2(b):
     H[k] = H(f_k) = \sum_{i=0}^{3} h_i\,e^{-j2\pi f_k \tau_i} = \sum_{i=0}^{3} h_i\,e^{-j2\pi k n_i/N}.
 \end{equation}
 The second form shows that $H[k]$ is also the $N$-point DFT of $h[n]$, with $k$ reordered to $-N/2 \sim N/2-1$. The
-script finds the two equal to within $7.9 \times 10^{-15}$.
+script finds the two equal to within $7.9 \times 10^{-15}$. Table~\ref{tab:q3c} lists some of the 512 subcarriers: both
+band edges, the strongest and weakest ones, and the ones around DC.
+
+\begin{table}[H]
+\centering
+\caption{Selected Subcarrier Frequencies and Channel Values ($\Delta f = 488.28125$ kHz)}
+\label{tab:q3c}
+\setlength{\tabcolsep}{14pt}
+\renewcommand{\arraystretch}{1.15}
+\input{tab/q3c.tex}
+\end{table}
 
 In the figure the stems sample the gray curve, which is the continuous $|H(f)|$ and $\angle H(f)$ of Q2(b) on the same
 axis. The subcarriers cover exactly one period $[-F_s/2, F_s/2)$ of $H(f)$, i.e.\ the middle half of the Q2(b) plot.
@@ -527,14 +547,16 @@ Homework 1). Draw the real part and imaginary part of frequency domain data $X[k
 transform it to time domain and add the cyclic prefix with length specified in Q3, which is indicated by $x[n]$. (10\%)}
 
 The black points of HW1 Fig.~1 lie at $45^\circ$, $135^\circ$, $225^\circ$ and $315^\circ$ on the unit circle. As in
-HW1, a bit pair $(b_{2k}, b_{2k+1})$ maps to
+HW1, the two bits $(b_0, b_1)$ assigned to subcarrier $k$ map to
 \begin{equation}
-    X[k] = \frac{(1 - 2b_{2k}) + j(2b_{2k+1} - 1)}{\sqrt 2},
+    X[k] = \frac{(1 - 2b_0) + j(2b_1 - 1)}{\sqrt 2},
 \end{equation}
 i.e.\ $(0,1) \to e^{j\pi/4}$, $(1,1) \to e^{j3\pi/4}$, $(1,0) \to e^{j5\pi/4}$ and $(0,0) \to e^{j7\pi/4}$.
 I draw $2N = 1024$ random bits with \texttt{randi}, continuing the seed-39 stream after the four $\gamma_i$, and put
 one symbol on each subcarrier $k = -256, \ldots, 255$. The four symbols occur 162, 120, 120 and 110 times. Every $X[k]$
-has $|X[k]| = 1$, so its real and imaginary parts only take the values $\pm 1/\sqrt 2$.
+has $|X[k]| = 1$, so its real and imaginary parts only take the values $\pm 1/\sqrt 2$ (Figure~\ref{fig:q4a1}). With
+512 stems the full-band panels are dense, so the bottom row of that figure zooms into $k = -16 \sim 15$, where each
+symbol can be read off.
 
 For the transform I use the unitary DFT pair
 \begin{equation}
@@ -547,14 +569,22 @@ $N_g = 64$ samples copied to the front:
 \begin{equation}
     x_{\mathrm{cp}}[n] = [\,x[N - N_g], \ldots, x[N-1],\ x[0], \ldots, x[N-1]\,], \qquad 576\ \text{samples}.
 \end{equation}
-In the lower two panels the gray block ($n = 0 \sim 63$) is the CP and the green block ($n = 512 \sim 575$) is where it
+In Figure~\ref{fig:q4a2} the gray block ($n = 0 \sim 63$) is the CP and the green block ($n = 512 \sim 575$) is where it
 was copied from; the difference between them is exactly 0. The time signal looks like noise with a peak of
 $|x| = 2.59$, as expected for 512 subcarriers with random phases.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.88\linewidth]{q4a.pdf}
-    \caption{Real and Imaginary Parts of $X[k]$ (top two) and of the Time-Domain Symbol $x[n]$ with CP (bottom two)}
+    \includegraphics[width=0.88\linewidth]{q4a1.pdf}
+    \caption{Real and Imaginary Parts of the QPSK Data $X[k]$ versus Subcarrier Index (bottom: zoom on $k = -16 \sim 15$)}
+    \label{fig:q4a1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\linewidth]{q4a2.pdf}
+    \caption{Real and Imaginary Parts of the Transmitted Signal $x[n]$ with Cyclic Prefix}
+    \label{fig:q4a2}
 \end{figure}
 
 \newpage

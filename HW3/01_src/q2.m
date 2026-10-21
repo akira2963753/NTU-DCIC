@@ -51,7 +51,7 @@ title('Magnitude (linear)');
 nexttile;
 plot(f_MHz, 20*log10(abs(H)), 'Color', p.blue);
 set_f_axis();
-ylim([-40 10]);
+ylim([-50 10]);
 ylabel('$20\log_{10}|H(f)|$ (dB)');
 title('Magnitude (dB)');
 nexttile;

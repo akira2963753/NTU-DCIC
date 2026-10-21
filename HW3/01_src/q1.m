@@ -15,8 +15,8 @@ i_idx = 0:3;
 %% (a) Linear and normalized powers
 pl = ch.p;
 pt = ch.pt;
-fprintf('(a) p   = [%s]\n', sprintf(' %.8g', pl));
-fprintf('    p~  = [%s]\n', sprintf(' %.8g', pt));
+fprintf('(a) p   = [%s]\n', sprintf(' %.8f', pl));
+fprintf('    p~  = [%s]\n', sprintf(' %.8f', pt));
 fprintf('    sum(p) = %.8g, sum(p~) = %.8g\n', sum(pl), sum(pt));
 
 %% (b) Delay moments
