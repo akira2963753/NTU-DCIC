@@ -100,7 +100,7 @@ for i = 1:4
     text(ni(i), pt(i) + 0.04, sprintf('$n_%d = %d$', i_idx(i), ni(i)), 'Color', p.red, 'FontSize', 12, ...
         'HorizontalAlignment', 'center');
 end
-xlim([-2 L + 1]); ylim([0 0.6]);
+xlim([-2 L + 3]); ylim([0 0.6]);
 xticks(0:5:L-1);
 xlabel('Sample index $n$ ($T_s = 4$ ns)');
 ylabel('$\tilde p$ at tap $n$');

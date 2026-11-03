@@ -19,9 +19,9 @@ fprintf('    power-of-2 candidates: 32 (< %d, too short), 64 (>= %d) -> Ng = %d 
     Ng_min, Ng_min, Ng, Ng/Fs*1e9);
 
 %% (b) FFT size
-fprintf('\n(b) N      Ng/N     < 1/4 ?\n');
+fprintf('\n(b) N      Ng/N     <= 1/4 ?\n');
 for Nc = 2.^(6:10)
-    fprintf('    %4d   %.4f   %d\n', Nc, Ng/Nc, Ng/Nc < 1/4);
+    fprintf('    %4d   %.4f   %d\n', Nc, Ng/Nc, Ng/Nc <= 1/4);
 end
 df = Fs/N;
 fprintf('    -> N = %d, Ng/N = 1/%d, subcarrier spacing df = Fs/N = %.6f kHz\n', N, N/Ng, df/1e3);
@@ -39,7 +39,7 @@ Hk_dft = fftshift(fft(ch.hn, N));    % N-point DFT of h[n], reordered to k = -N/
 fprintf('\n(c) f_k = k*df, k = %d ~ %d -> f_k = %.6f ~ %.6f MHz\n', k(1), k(end), fk(1)/1e6, fk(end)/1e6);
 fprintf('    |H(f_k)|: max = %.4f at k = %d, min = %.4f at k = %d\n', Hmax, k(imax), Hmin, k(imin));
 fprintf('    max|H(f_k) - DFT_N{h[n]}[k]| = %.1e\n', max(abs(Hk - Hk_dft)));
-k_show = [-256 -255 -128 -90 -28 -1 0 1 128 255];
+k_show = unique([-N/2, -N/2 + 1, k(imax), k(imin), -1, 0, 1, N/2 - 1]);    % band edges, extremes, DC
 fprintf('       k     f_k (MHz)      |H(f_k)|   angle H(f_k) (rad)\n');
 for kk = k_show
     fprintf('    %4d   %+12.6f   %.6f   %+.6f\n', kk, fk(kk + N/2 + 1)/1e6, abs(Hk(kk + N/2 + 1)), angle(Hk(kk + N/2 + 1)));
@@ -58,7 +58,14 @@ set_k_axis(N);
 ylim([0 2.4]);
 ylabel('$|H[k]|$');
 legend('$|H(f)|$, continuous', '$|H(f_k)|$', 'Location', 'northeast', 'Orientation', 'horizontal');
-title('Magnitude');
+ax = gca;
+% Same tile, second axes: top ticks give f_k = k*df in MHz for the k ticks below
+ax2 = axes(tl);
+ax2.Layout.Tile = 1;
+set(ax2, 'Color', 'none', 'XAxisLocation', 'top', 'YAxisLocation', 'right', 'YTick', [], ...
+    'XGrid', 'off', 'YGrid', 'off', 'XLim', ax.XLim, 'XTick', ax.XTick, ...
+    'XTickLabel', compose('%.1f', ax.XTick*df/1e6));
+xlabel(ax2, 'Subcarrier frequency $f_k$ (MHz)');
 nexttile;
 plot(f/df, angle(H)/pi, 'Color', p.muted, 'LineWidth', 0.9); hold on;
 stem(k, angle(Hk)/pi, 'filled', 'Color', p.orange, 'MarkerSize', 2.2, 'LineWidth', 0.6);
@@ -87,5 +94,5 @@ end
 
 function set_k_axis(N)
 xlim([-N/2 - 4, N/2 + 3]);
-xticks(-N/2:64:N/2);
+xticks(-N/2:N/8:N/2);
 end

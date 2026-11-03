@@ -44,12 +44,12 @@ nexttile([1 2]);
 stem_qpsk(k, real(X), p.blue);
 set_k_axis(N);
 ylabel('$\mathrm{Re}\{X[k]\}$');
-title('Real part, all $N = 512$ subcarriers');
+title(sprintf('Real part, all $N = %d$ subcarriers', N));
 nexttile([1 2]);
 stem_qpsk(k, imag(X), p.orange);
 set_k_axis(N);
 ylabel('$\mathrm{Im}\{X[k]\}$');
-title('Imaginary part, all $N = 512$ subcarriers');
+title(sprintf('Imaginary part, all $N = %d$ subcarriers', N));
 kz = -16:15;    % zoom so the individual symbols are readable
 nexttile;
 stem_qpsk(kz, real(X(kz + N/2 + 1)), p.blue);
@@ -68,12 +68,12 @@ fh = new_fig('Q4(a) x[n]', [900 640]);
 tl = tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');
 nexttile;
 plot_cp_signal(ncp, real(xcp), Ng, N, p, p.blue);
-ylabel('$\mathrm{Re}\{x[n]\}$');
+ylabel('$\mathrm{Re}\{x_{\mathrm{cp}}[n]\}$');
 legend(sprintf('CP, $0 \\le n \\le %d$', Ng - 1), sprintf('Copied from $%d \\le n \\le %d$', N, N + Ng - 1), ...
     'Location', 'northoutside', 'Orientation', 'horizontal');
 nexttile;
 plot_cp_signal(ncp, imag(xcp), Ng, N, p, p.orange);
-ylabel('$\mathrm{Im}\{x[n]\}$');
+ylabel('$\mathrm{Im}\{x_{\mathrm{cp}}[n]\}$');
 tl_labels(tl, sprintf('Time-domain OFDM symbol with cyclic prefix, $N + N_g = %d$ samples', N + Ng), xl_n);
 save_fig(fh, 'q4a2');
 
@@ -97,7 +97,7 @@ legend('CP (removed)', 'Channel tail (removed)', 'Location', 'northoutside', 'Or
 nexttile;
 plot_rx_signal(ny, imag(y), Ng, N, L, p, p.orange);
 ylabel('$\mathrm{Im}\{y[n]\}$');
-tl_labels(tl, sprintf('Received signal $y[n] = h[n] \\otimes x[n]$, $%d$ samples', numel(y)), xl_n);
+tl_labels(tl, sprintf('Received signal $y[n] = h[n] \\otimes x_{\\mathrm{cp}}[n]$, $%d$ samples', numel(y)), xl_n);
 save_fig(fh, 'q4b1');
 
 fh = new_fig('Q4(b) freq', [900 420]);
@@ -151,12 +151,12 @@ for i = 1:3
     semilogy(k, max(err_try(i, :), 1e-17), '.', 'Color', cols{i}, 'MarkerSize', 6); hold on;
 end
 set_k_axis(N);
-ylim([1e-17 10]);
+ylim([3e-18 10]);
 yticks(10.^(-16:4:0));
 ylabel('$|H[k] - H(f_k)|$');
 legend('$N_g = 32$', '$N_g = 49$', '$N_g = 50$ and $64$ (identical)', 'Location', 'east');
-title('Estimation error vs.\ CP length (channel memory $L - 1 = 50$)');
-tl_labels(tl, sprintf('Estimated channel $H[k] = Y[k]/X[k]$ ($N_g = %d$) vs.\\ Q3(c)', Ng), xl_k);
+title('Estimation error vs. CP length (channel memory $L - 1 = 50$)');
+tl_labels(tl, sprintf('Estimated channel $H[k] = Y[k]/X[k]$ ($N_g = %d$) vs. Q3(c)', Ng), xl_k);
 save_fig(fh, 'q4c');
 
 %% Local functions
@@ -181,7 +181,7 @@ xregion(N - 0.5, N + Ng - 0.5, 'FaceColor', p.aqua, 'FaceAlpha', 0.15, 'EdgeColo
 hold on;
 plot(n, v, 'Color', color, 'LineWidth', 0.9, 'HandleVisibility', 'off');
 xlim([0 N + Ng]);
-xticks([0 Ng 128:128:N N + Ng]);
+xticks([0 Ng N/2 N N + Ng]);
 ylim([-3 3]);
 end
 
@@ -191,11 +191,11 @@ xregion(N + Ng - 0.5, N + Ng + L - 1.5, 'FaceColor', p.red, 'FaceAlpha', 0.12, '
 hold on;
 plot(n, v, 'Color', color, 'LineWidth', 0.9, 'HandleVisibility', 'off');
 xlim([0 numel(n)]);
-xticks([0 Ng 128:128:N N + Ng N + Ng + L - 1]);
+xticks([0 Ng N/2 N N + Ng N + Ng + L - 1]);
 ylim([-3 3]);
 end
 
 function set_k_axis(N)
 xlim([-N/2 - 4, N/2 + 3]);
-xticks(-N/2:64:N/2);
+xticks(-N/2:N/8:N/2);
 end
