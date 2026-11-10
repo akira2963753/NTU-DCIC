@@ -8,3 +8,8 @@
 *.synctex.gz
 *.bbl
 *.blg
+
+# HDL simulation artifacts
+*.vvp
+*.vcd
+*.fsdb

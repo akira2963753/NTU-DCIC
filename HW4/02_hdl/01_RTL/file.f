@@ -1,0 +1,10 @@
+-sverilog
++incdir+.
+./DCORR.sv
+./NORM_SQ.sv
+./DIVIDER.sv
+./THRESH.sv
+./PEAK_SEARCH.sv
+./SBD.sv
+../00_TESTBED/PATTERN.sv
+../00_TESTBED/TESTBED.sv
