@@ -1,6 +1,6 @@
 function save_fig(fh, name)
 % Export a figure to 00_report/fig as vector PDF (for LaTeX) and PNG (for preview)
-figdir = fullfile(fileparts(mfilename('fullpath')), '..', '..', '00_report', 'fig');
+figdir = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..', '00_report', 'fig');
 if ~exist(figdir, 'dir'), mkdir(figdir); end
 
 % Render numeric tick labels in math mode so negatives get a true minus sign

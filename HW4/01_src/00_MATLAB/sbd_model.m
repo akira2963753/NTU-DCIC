@@ -1,5 +1,5 @@
 function o = sbd_model(z, P)
-% Bit-true model of the HDL symbol boundary detector (02_hdl/01_RTL)
+% Bit-true model of the HDL symbol boundary detector (01_src/02_RTL)
 %   z      : complex input record, m = 1..M (quantized here to P.W_IN bits per I/Q)
 %   o.zr, o.zi : quantized input codes (two's complement integers), the HDL input
 %   o.phi  : divider output Phi_NM in U2.14 integer code, one per input sample

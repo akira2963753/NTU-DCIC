@@ -9,7 +9,7 @@
 ******************************************************************************/
 `ifndef DEFINE_VH
     `define DEFINE_VH
-    // Algorithm (keep in sync with 01_src/sbd_param.m)
+    // Algorithm (keep in sync with 01_src/00_MATLAB/sbd_param.m)
     `define R_LEN 32
     `define L_LAG 128
     `define W_WIN 32

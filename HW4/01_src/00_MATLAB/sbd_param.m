@@ -1,6 +1,6 @@
 function P = sbd_param()
 % Fixed-point and algorithm parameters of the symbol boundary detector (Q3)
-% Keep in sync with 02_hdl/01_RTL/define.vh
+% Keep in sync with 01_src/02_RTL/define.vh
 P.R = 32;                % correlation window
 P.L = 128;               % correlation lag (= N, CP-based timing as in Q2(c))
 P.W_IN = 16;             % input word length per I/Q (two's complement)

@@ -34,7 +34,7 @@ module PATTERN (
     localparam TIMEOUT = 100000;
     localparam NUM_SMP = 480;
     localparam MAX_DET = 16;
-    localparam string VEC_DIR = "../00_TESTBED/src/";
+    localparam string VEC_DIR = "../01_TESTBED/src/";
 
     //=============================================================
     //                       Golden Vectors

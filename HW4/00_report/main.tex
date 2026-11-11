@@ -134,11 +134,10 @@
 \chapter{Setup and Code Organization}
 % ─────────────────────────────────────────────
 My student ID is M11407439. Its last digit, 9, is $m_1$ in Q1(b), and the whole number 11407439 is the random seed
-for the angles and path gains of Q1 and for the noise of Q2(d) and Q3. The MATLAB scripts are in \texttt{01\_src} and
-the hardware design is in \texttt{02\_hdl}.
+for the angles and path gains of Q1 and for the noise of Q2(d) and Q3.
 
-Each question has one MATLAB script (\texttt{q1.m} to \texttt{q3.m}); the RTL is in \texttt{02\_hdl/01\_RTL}
-and the testbench in \texttt{02\_hdl/00\_TESTBED}. All numbers in this report come from the console output of the scripts and of the VCS simulation.
+All code is in \texttt{01\_src}. The MATLAB scripts (\texttt{q1.m} to \texttt{q3.m}, one per question) are in
+\texttt{00\_MATLAB}, the testbench is in \texttt{01\_TESTBED}, and the RTL is in \texttt{02\_RTL}. All numbers in this report come from the console output of the scripts and of the VCS simulation.
 
 \newpage
 
@@ -560,7 +559,7 @@ compare your implementation results with your simulation result in Q3(c) and pro
 
 \subsection{Implementation}
 
-I wrote the design in SystemVerilog (\texttt{02\_hdl/01\_RTL}) with the modules of Figure~\ref{fig:q3b}. The
+I wrote the design in SystemVerilog (\texttt{01\_src/02\_RTL}) with the modules of Figure~\ref{fig:q3b}. The
 pipeline from input to metric is:
 \begin{center}
 \setlength{\tabcolsep}{8pt}
@@ -607,7 +606,7 @@ the next subsection show these cases for the noiseless record.
 
 \subsection{Behavioral Simulation}
 
-\texttt{q3.m} writes the quantized inputs, $\eta$ and the bit-true golden data into \texttt{00\_TESTBED/src}.
+\texttt{q3.m} writes the quantized inputs, $\eta$ and the bit-true golden data into \texttt{01\_TESTBED/src}.
 \texttt{PATTERN.sv} feeds the 480 samples of each case, one per cycle, and compares every metric sample and every
 detection with the golden data. In Synopsys VCS S-2021.09, both the noiseless and the 12\,dB case match the bit-true
 model for all 480 metric samples and all 3 detections.

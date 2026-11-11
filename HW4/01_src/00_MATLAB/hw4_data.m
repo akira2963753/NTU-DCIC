@@ -1,6 +1,6 @@
 function d = hw4_data()
 % Data of Q2 and Q3: OFDMTx from HW4.mat, frame parameters and the 12 dB noisy record
-s = load(fullfile(fileparts(mfilename('fullpath')), '..', 'HW4.mat'));
+s = load(fullfile(fileparts(mfilename('fullpath')), '..', '..', 'HW4.mat'));
 d.x = s.OFDMTx(:);       % 640 x 1: preamble + 3 normal OFDM symbols
 d.N = 128;               % FFT size
 d.Ng = 32;               % cyclic prefix length

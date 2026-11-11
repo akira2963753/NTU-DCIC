@@ -81,8 +81,8 @@ fprintf('    normalizer keeps %d magnitude bits, numerator %d bits, denominator 
 fprintf('    divider: dividend %d bits (num << %d), divisor %d bits, quotient U2.%d (%d bits), eta = %d\n', ...
     P.W_NUM + P.F_PHI, P.F_PHI, P.W_DEN, P.F_PHI, P.W_PHI, P.ETA_Q);
 
-% Bit-true model of the HDL and the test vectors of PATTERN.sv (02_hdl/00_TESTBED/src)
-vecdir = fullfile(fileparts(mfilename('fullpath')), '..', '02_hdl', '00_TESTBED', 'src');
+% Bit-true model of the HDL and the test vectors of PATTERN.sv (01_src/01_TESTBED/src)
+vecdir = fullfile(fileparts(mfilename('fullpath')), '..', '01_TESTBED', 'src');
 if ~exist(vecdir, 'dir'), mkdir(vecdir); end
 fid = fopen(fullfile(vecdir, 'eta.hex'), 'w');
 fprintf(fid, '%04X\n', P.ETA_Q);
@@ -98,7 +98,7 @@ for c = 1:2
 end
 
 %% (d) Hardware results versus the floating-point simulation
-% The VCS simulation (02_hdl/01_RTL/01_run) checks that the RTL output equals sbd_model bit by bit.
+% The VCS simulation (01_src/02_RTL/01_run) checks that the RTL output equals sbd_model bit by bit.
 fprintf('\n(d) local peak searcher: eta = %.2f, decision %d samples after the candidate, flush at the last sample\n', P.ETA, P.W_WIN);
 fh = new_fig('Q3(d)', [900 760]);
 tl = tiledlayout(2, 1, 'TileSpacing', 'compact', 'Padding', 'compact');

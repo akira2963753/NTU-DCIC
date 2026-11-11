@@ -1,3 +1,3 @@
 #!/bin/tcsh
-# Behavioral simulation with VCS (run inside 01_RTL)
+# Behavioral simulation with VCS (run inside 02_RTL)
 vcs -timescale=1ns/1ps -full64 -debug_access+all +v2k -R -f file.f -l vcs.log

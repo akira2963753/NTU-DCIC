@@ -9,7 +9,7 @@
 ******************************************************************************/
 `include "define.vh"
 
-// Threshold-gated local peak searcher (same rule as 01_src/sbd_peak_search.m)
+// Threshold-gated local peak searcher (same rule as 01_src/00_MATLAB/sbd_peak_search.m)
 //   - a search starts at the first sample with above = 1 (once the previous region fell below eta)
 //   - the candidate is replaced by a strictly larger above-threshold value, which restarts cnt
 //   - the candidate is declared after W_WIN further samples without a larger value,
